@@ -1,7 +1,33 @@
+import { useEffect, useState } from "react";
 import { Card } from "react-bootstrap";
 import "./moviedetails.css";
 
-export default function MovieDetails({ movie }) {
+export default function MovieDetails() {
+  const [movie, setMovie] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchMovie = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch("https://jsonfakery.com/movies/random/1");
+        if (!res.ok) throw new Error("Erreur lors du chargement du film");
+        const data = await res.json();
+        setMovie(data[0]);
+      } catch (err) {
+        setError("Impossible de charger le film");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchMovie();
+  }, []);
+
+  if (error) return <p>Erreur : {error}</p>;
+  if (loading) return <p>Chargement...</p>;
+
   return (
     <Card className="mb-4">
       {movie.poster_path ? (

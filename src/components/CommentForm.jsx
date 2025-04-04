@@ -7,7 +7,15 @@ import { addComment } from "../redux/commentSlice";
 
 const schema = yup.object().shape({
   comment: yup.string().required("Le commentaire est obligatoire").max(500),
-  note: yup.number().required("Veuillez sélectionner une note").min(1).max(5),
+  note: yup
+    .number()
+    .transform((value, originalValue) =>
+      originalValue === "" ? undefined : value
+    )
+    .typeError("Veuillez sélectionner une note")
+    .required("Veuillez sélectionner une note")
+    .min(1, "La note doit être au minimum 1")
+    .max(5, "La note doit être au maximum 5"),
   acceptConditions: yup
     .boolean()
     .oneOf([true], "Vous devez accepter les conditions"),
@@ -18,6 +26,7 @@ export default function CommentForm() {
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -31,6 +40,7 @@ export default function CommentForm() {
         note: data.note,
       })
     );
+    reset();
   };
 
   return (
