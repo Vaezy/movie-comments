@@ -30,6 +30,11 @@ export default function CommentForm() {
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
+    defaultValues: {
+      comment: "",
+      note: "",
+      acceptConditions: false,
+    },
   });
 
   const onSubmit = (data) => {
